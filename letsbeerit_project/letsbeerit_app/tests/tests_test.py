@@ -7,3 +7,9 @@ class TestView(TestCase):
         response = self.client.get('/')
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'Hello World')
+
+
+class TestUsersListView(TestCase):
+    def test_users_list_view(self):
+        response = self.client.get('/users')
+        self.assertEqual(response.status_code, 401)
