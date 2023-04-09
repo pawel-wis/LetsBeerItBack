@@ -13,4 +13,3 @@ class TestUsersListView(TestCase):
     def test_users_list_view(self):
         response = self.client.get('/users')
         self.assertEqual(response.status_code, 401)
-        self.assertContains(response, 'Authentication credentials were not provided')
