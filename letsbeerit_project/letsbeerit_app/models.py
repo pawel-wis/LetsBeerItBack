@@ -3,7 +3,7 @@ from django.conf import settings
 from django.db.models.signals import post_save
 from rest_framework.authtoken.models import Token
 from django.dispatch import receiver
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser
 
 
 # Create your models here.
@@ -13,8 +13,9 @@ def create_auth_token(sender, instance=None, created=False, **kwargs):
         Token.objects.create(user=instance)
 
 
-class AppUser(User):
-    pass
+class AppUser(AbstractUser):
+    group_id = models.ForeignKey('SocialGroup', on_delete=models.CASCADE, null=True, blank=True)
+
 
 class SocialGroup(models.Model):
     name = models.CharField(max_length=30)
