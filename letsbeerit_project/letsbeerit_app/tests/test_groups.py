@@ -12,9 +12,9 @@ class TestGroup(APITestCase):
     def test_user_can_add_groups(self):
         for i, user in enumerate(self.users):
             if i % 2:
-                AppUser.objects.filter(id=user.id).update(group_id=self.groups[0].id)
+                AppUser.objects.filter(id=user.id).update(group_id=self.groups[0])
             else:
-                AppUser.objects.filter(id=user.id).update(group_id=self.groups[1].id)
+                AppUser.objects.filter(id=user.id).update(group_id=self.groups[1])
         
         users_updated = AppUser.objects.all()
         self.assertListEqual([user_with_group for user_with_group in users_updated if user_with_group.group_id != None],
