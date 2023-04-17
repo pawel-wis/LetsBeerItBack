@@ -1,3 +1,4 @@
+import factory
 from factory.django import DjangoModelFactory
 from ...models import AppUser, SocialGroup, SocialMembership
 from factory.faker import Faker
@@ -23,8 +24,8 @@ class SocialGroupFactory(DjangoModelFactory):
 class SocialMembershipFactory(DjangoModelFactory):
     class Meta:
         model = SocialMembership
+        # django_get_or_create = ("appuser", "socialgroup")
 
-    user = AppUserFactory()
-    group = SocialGroupFactory()
-    appuser_group_role = Faker("random_element", elements=("member", "admin"))
-
+    appuser = factory.SubFactory(AppUserFactory)
+    socialgroup = factory.SubFactory(SocialGroupFactory)
+    role_user_in_group = Faker("random_element", elements=("member", "admin"))
