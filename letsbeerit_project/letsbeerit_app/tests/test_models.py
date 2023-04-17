@@ -38,18 +38,18 @@ class SocialGroupTestCase(APITestCase):
 
 
 class SocialMembershipTestCase(APITestCase):
+    def setUp(self) -> None:
+        self.memberships = factories.SocialMembershipFactory.create_batch(10)
+
     def test_create_membership(self):
-        memberships = factories.SocialMembershipFactory.create_batch(10)
-        mandatory_fields = ["user", "group", "appuser_group_role"]
-        for membership in memberships:
+        mandatory_fields = ["appuser", "socialgroup", "role_user_in_group"]
+        for membership in self.memberships:
             self.assertIsInstance(membership, SocialMembership)
             for field in mandatory_fields:
                 self.assertTrue(hasattr(membership, field))
                 self.assertIsNotNone(getattr(membership, field))
 
     def test_unique_membership(self):
-        user = factories.AppUserFactory.create()
-        group = factories.SocialGroupFactory.create()
-        membership1 = factories.SocialMembershipFactory.create(user=user, group=group)
         with self.assertRaises(IntegrityError):
-            membership2 = factories.SocialMembershipFactory.create(user=user, group=group)
+            membership2 = factories.SocialMembershipFactory.create(appuser=self.memberships[0].appuser,
+                                                                   socialgroup=self.memberships[0].socialgroup)
