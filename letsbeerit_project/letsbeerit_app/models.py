@@ -35,11 +35,14 @@ class SocialGroup(models.Model):
 APP_USERS_GROUP_ROLES = (("member", "admin"),)
 
 
-class SocialMembership(SocialGroup):
-    appuser = models.ForeignKey(AppUser, on_delete=models.CASCADE, related_name="user")
-    socialgroup = models.ForeignKey(SocialGroup, on_delete=models.CASCADE, related_name="group")
+class SocialMembership(models.Model):
+    class Meta:
+        unique_together = [["appuser", "socialgroup"], ]
+
+    appuser = models.ForeignKey(AppUser, on_delete=models.CASCADE, related_name="+")
+    socialgroup = models.ForeignKey(SocialGroup, on_delete=models.CASCADE, related_name="+")
     role_user_in_group = models.CharField(max_length=10, choices=APP_USERS_GROUP_ROLES,
                                           default=APP_USERS_GROUP_ROLES[0])
 
     def __str__(self):
-        return self.user.username + " " + self.group.name
+        return self.appuser.username + " is " + self.role_user_in_group + " in " + self.socialgroup.name
