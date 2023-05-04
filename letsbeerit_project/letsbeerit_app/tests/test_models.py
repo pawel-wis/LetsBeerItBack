@@ -1,7 +1,18 @@
 from .test_utils import factories
 from rest_framework.test import APITestCase
 from django.db.utils import IntegrityError
-from ..models import AppUser, SocialGroup, SocialMembership
+from ..models import AppUser, SocialGroup, SocialMembership, UserPin
+
+
+class UserPinTestCase(APITestCase):
+    def test_create_pin(self):
+        pins = factories.UserPinFactory.create_batch(10)
+        mandatory_fields = ["alt_name", "latitude", "longitude"]
+        for pin in pins:
+            self.assertIsInstance(pin, UserPin)
+            for field in mandatory_fields:
+                self.assertTrue(hasattr(pin, field))
+                self.assertIsNotNone(getattr(pin, field))
 
 
 class AppUserTestCase(APITestCase):
@@ -14,6 +25,15 @@ class AppUserTestCase(APITestCase):
             for field in mandatory_fields:
                 self.assertTrue(hasattr(user, field))
                 self.assertIsNotNone(getattr(user, field))
+
+    def test_user_with_pin_location(self):
+        user = factories.AppUserFactory.create()
+        pin = factories.UserPinFactory.create()
+        user.user_pin = pin
+        user.save()
+        self.assertEqual(user.user_pin, pin)
+        saved_user = AppUser.objects.get(username=user.username)
+        self.assertEqual(saved_user.user_pin, pin)
 
     def test_unique_user_name(self):
         user1 = factories.AppUserFactory.create(username="test_user")
