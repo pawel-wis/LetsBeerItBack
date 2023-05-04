@@ -1,7 +1,16 @@
 import factory
 from factory.django import DjangoModelFactory
-from ...models import AppUser, SocialGroup, SocialMembership
+from ...models import AppUser, SocialGroup, SocialMembership, UserPin
 from factory.faker import Faker
+
+
+class UserPinFactory(DjangoModelFactory):
+    class Meta:
+        model = UserPin
+
+    alt_name = Faker("sentence", nb_words=3)
+    latitude = Faker("latitude")
+    longitude = Faker("longitude")
 
 
 class AppUserFactory(DjangoModelFactory):
@@ -11,6 +20,7 @@ class AppUserFactory(DjangoModelFactory):
     username = Faker("user_name")
     password = Faker("password")
     email = Faker("email")
+    user_pin = factory.SubFactory(UserPinFactory)
 
 
 class SocialGroupFactory(DjangoModelFactory):
@@ -24,7 +34,6 @@ class SocialGroupFactory(DjangoModelFactory):
 class SocialMembershipFactory(DjangoModelFactory):
     class Meta:
         model = SocialMembership
-        # django_get_or_create = ("appuser", "socialgroup")
 
     appuser = factory.SubFactory(AppUserFactory)
     socialgroup = factory.SubFactory(SocialGroupFactory)

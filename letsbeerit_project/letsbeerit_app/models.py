@@ -15,10 +15,20 @@ def create_auth_token(sender, instance=None, created=False, **kwargs):
         Token.objects.create(user=instance)
 
 
+class UserPin(models.Model):
+    alt_name = models.CharField(max_length=30, blank=True)
+    latitude = models.DecimalField(max_digits=9, decimal_places=6)
+    longitude = models.DecimalField(max_digits=9, decimal_places=6)
+
+    def __str__(self):
+        return self.user.username + " pinned at " + str(self.latitude) + ", " + str(self.longitude)
+
+
 class AppUser(AbstractUser):
     username = models.CharField(max_length=15, unique=True)
     password = models.CharField(max_length=20)
     email = models.EmailField(max_length=30, unique=True)
+    user_pin = models.OneToOneField(UserPin, on_delete=models.CASCADE, null=True, blank=True)
 
     def __str__(self):
         return self.username
